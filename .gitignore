@@ -1,0 +1,11 @@
+# directories
+node_modules
+/dist
+
+
+# files
+
+# Editor directories and files
+.idea
+.vscode
+*.suo

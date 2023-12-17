@@ -1,3 +1,7 @@
+/**
+ * 这个stats的结构可以在以后写插件的时候参考
+ * 可以stringify一份以后再打印看完整的结构
+ */
 const stats = {
     errors: [], // 错误信息
     warnings: [], // 警告信息
@@ -13,7 +17,7 @@ const stats = {
       {
         name: 'main.aac.js',
         size: 952,
-        chunks: [Array],
+        chunks: [Array], // 这里可以stringify以后来看
         chunkNames: [Array],
         info: [Object],
         emitted: true,

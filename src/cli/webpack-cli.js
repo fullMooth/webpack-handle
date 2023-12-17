@@ -5,6 +5,8 @@ debugger
 // 读取webpack.config.js里的配置 /webpack.config
 const webpackOptions = require(path.resolve(process.cwd(), 'webpack.config'))
 
+console.log(path.resolve(process.cwd()))
+
 // webpack 执行会返回 compiler 对象
 const compiler = webpack(webpackOptions)
 
@@ -12,10 +14,11 @@ const compiler = webpack(webpackOptions)
 compiler.run((err, stats) => {
     // console.log(err, stats)
     console.log(stats.toJson({
-        entries: true,
-        chunks: true,
-        modules: true,
-        assets: true
+        entries: true,// 显示入口
+        chunks: true, // 显示打包出来的代码块
+        modules: true, // 以数组方式放置置模块
+        _modules: true, // 以对象的方式放置模块
+        assets: true // 产出的文件或者资源
     }))
 })
 

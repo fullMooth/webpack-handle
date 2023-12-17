@@ -1,11 +1,21 @@
-const { Tapable } = require('tapable')
+const { Tapable, SyncHook, SyncBailHook, AsyncParallelHook, AsyncSeriesHook } = require('tapable')
 
 class Compiler extends Tapable {
     constructor(context) {
         super()
         this.options = {} // 这里是默认配置
         this.hooks = { // compiler实例上会挂载很多钩子
-
+            // 入口选项解析入口
+            entryOption: new SyncBailHook(['contxt', 'entry']),
+            // 真正地开启构建流程
+            make: new AsyncParallelHook(['compilation']),
+            beforeRun: new AsyncSeriesHook(['compiler']), // 运行前
+            run: new AsyncSeriesHook(['compiler']), // 运行
+            beforeCompile: new AsyncSeriesHook(['params']), // 编译前
+            compile: new SyncHook(['params']), // 编译
+            thisCompilation: new SyncHook(['compilation', 'params']), // 开启一次新的编译
+            compilation: new SyncBailHook(['compilation', 'params']), // 创建成功一次新的compilation对象
+            done: new AsyncSeriesHook(['stats']) // 编译完成
         }
         this.context = context // compiler.context=当前工作目录
     }

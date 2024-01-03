@@ -6,8 +6,8 @@ class NodeEnvironmentPlugin {
         this.options = options
     }
     apply(compiler) {
-        compiler.inputFileSystem = fs
-        compiler.outputFileSystem = fs
+        compiler.inputFileSystem = fs // 设置读文件模块
+        compiler.outputFileSystem = fs // 设置写文件模块
     }
 }
 

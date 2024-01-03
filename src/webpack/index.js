@@ -4,6 +4,7 @@
  */
 const path = require('path')
 const NodeEnvironmentPlugin = require('NodeEnvironmentPlugin')
+const WebpackOptionsApply = require('./WebpackOptionsApply')
 module.exports = function webpack(options) {
     // 设置上下文
     options.context = options.context || path.resolve(process.cwd())
@@ -21,6 +22,8 @@ module.exports = function webpack(options) {
         }
     }
 
+    // 挂载默认插件
+    new WebpackOptionsApply().process(options, compiler)
 
     return compiler
 }

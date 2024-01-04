@@ -3,8 +3,9 @@
  * 1. 
  */
 const path = require('path')
-const NodeEnvironmentPlugin = require('NodeEnvironmentPlugin')
+const NodeEnvironmentPlugin = require('./NodeEnvironmentPlugin')
 const WebpackOptionsApply = require('./WebpackOptionsApply')
+const Compiler = require('./Compiler')
 module.exports = function webpack(options) {
     // 设置上下文
     options.context = options.context || path.resolve(process.cwd())

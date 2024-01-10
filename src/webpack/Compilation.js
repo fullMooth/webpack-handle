@@ -2,6 +2,7 @@ const { Tapable, SyncHook } = require('tapable')
 const NormalModuleFactory = require('./NormalModuleFactory')
 const path = require('path')
 const Parser = require('./Parser')
+const async = require('neo-async') // 并发执行异步任务 类似Promise.all()
 
 
 const parser = new Parser()
@@ -15,6 +16,7 @@ class Compilation extends Tapable {
         this.outputFileSystem = compiler.outputFileSystem // 文件输出系统
         this.entries = [] // 放着入口模块
         this.modules = [] // 所有打包进来的模块
+        this._modules = {} // key 是模块ID value是模块对象
         this.hooks = {
             // 当一个模块依赖成功后会执行这个钩子
             succeedModule: new SyncHook(['module'])
@@ -50,18 +52,21 @@ class Compilation extends Tapable {
             resource: path.posix.join(context, entry), // 此模块的绝对路径
             parser
         })
+
+        // 模块ID是一个相对于项目根目录的相对路径 例如index.js的moduleId是 ./src/index.js  title.js 是 ./src/title.js
+        module.moduleId = '.' + path.posix.sep + path.relative(this.context, module.resource)
         // return module
         //console.log(module)
         this.entries.push(module) // 将模块放入到入口数组中
         this.modules.push(module) // 将模块放入到整个模块数组中
         const afterBuild = (err, module) => {
             if (module.dependencies) { // 如果当前模块依赖于其他模块，则递归编译其依赖的模块
-                /*this.processModuleDependencies(module, (err) => {
+                this.processModuleDependencies(module, (err) => {
                     // 当这个入口模块和它所依赖的所有模块都编译完成后，才会调用用callback
                     callback(err, module)
                 })
-                */
-               callback(err, module)
+            } else {
+                callback(err, module)
             }
         }
 

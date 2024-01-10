@@ -1,6 +1,7 @@
 const { Tapable, SyncHook, SyncBailHook, AsyncParallelHook, AsyncSeriesHook } = require('tapable')
 const NormalModuleFactory = require('./NormalModuleFactory')
 const Compilation = require('./Compilation')
+const Stats = require('./Stats')
 class Compiler extends Tapable {
     constructor(context) {
         super()
@@ -37,7 +38,7 @@ class Compiler extends Tapable {
         // })
         // 编译成功的回调
         const onCompiled = (error, compilation) => {
-            callback(null, {})
+            callback(null, new Stats(compilation))
         }
 
         // 运行前

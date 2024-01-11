@@ -64,7 +64,7 @@ class NormalModule {
     }
 
     doBuild(compilation, callback) {
-        this.getSrouce(compilation, (err, data) => {
+        this.getSource(compilation, (err, data) => {
             this._source = data // 将读出源码存在_source属性上
             callback()
         })

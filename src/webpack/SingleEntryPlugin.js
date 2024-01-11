@@ -14,7 +14,7 @@ class SingleEntryPlugin {
         // 监听make事件 在回调里开始真正的编译 该事件由compiler的compile方法里来触发
         compiler.hooks.make.tapAsync('SingleEntryPlugin', (compilation, callback) => {
             // 在这里开始真正的编译入口
-            // compilation.addEntry(this.context, this.entry, this.name, callback)
+            compilation.addEntry(this.context, this.entry, this.name, callback)
         })
     }
 }

@@ -74,6 +74,10 @@ class Compilation extends Tapable {
         this.buildModule(module, afterBuild)
     }
 
+    processModuleDependencies(module, callback) {
+        callback()
+    }
+
     buildModule(module, afterBuild) {
         module.build(this, (err) => {
             this.hooks.succeedModule.call(module)

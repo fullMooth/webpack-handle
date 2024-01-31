@@ -59,6 +59,7 @@ class Compilation extends Tapable {
         //console.log(module)
         this.entries.push(module) // 将模块放入到入口数组中
         this.modules.push(module) // 将模块放入到整个模块数组中
+        this._modules.push[module.moduleId] = module
         const afterBuild = (err, module) => {
             if (module.dependencies) { // 如果当前模块依赖于其他模块，则递归编译其依赖的模块
                 this.processModuleDependencies(module, (err) => {
@@ -72,6 +73,47 @@ class Compilation extends Tapable {
 
         // 去编译模块
         this.buildModule(module, afterBuild)
+    }
+    processModuleDependencies(module, callback) {
+        let dependencies = module.dependencies
+        // 并发去编译依赖模块，等所有模块编译完成后才结束 最后才调用callback
+        async.forEach(dependencies, (dependency, done) => {
+            // 创建模块工厂
+            const moduleFactory = new NormalModuleFactory()
+
+            // 结构参数
+            const { name, context, rawRequest, resource, moduleId } = dependency
+            // 创建模块
+            const module = moduleFactory.create({
+                name, // 所属代码块的名称  相当于chunkName
+                context, // 上下文、工作目录
+                rawRequest, //
+                resource, // 此模块的绝对路径
+                moduleId,
+                parser
+            })
+
+            // 模块ID是一个相对于项目根目录的相对路径 例如index.js的moduleId是 ./src/index.js  title.js 是 ./src/title.js
+            module.moduleId = '.' + path.posix.sep + path.relative(this.context, module.resource)
+            // return module
+            //console.log(module)
+            this.entries.push(module) // 将模块放入到入口数组中
+            this.modules.push(module) // 将模块放入到整个模块数组中
+            this._modules.push[module.moduleId] = module
+            const afterBuild = (err, module) => {
+                if (module.dependencies) { // 如果当前模块依赖于其他模块，则递归编译其依赖的模块
+                    this.processModuleDependencies(module, (err) => {
+                        // 当这个入口模块和它所依赖的所有模块都编译完成后，才会调用用callback
+                        callback(err, module)
+                    })
+                } else {
+                    callback(err, module)
+                }
+            }
+
+            // 去编译模块
+            this.buildModule(module, afterBuild)
+        }, callback)
     }
 
     buildModule(module, afterBuild) {
